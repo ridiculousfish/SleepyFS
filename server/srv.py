@@ -102,17 +102,17 @@ class NfsSrv (rfc1094.NFS_PROGRAM_2, HostAccessControl):
     def __init__ (self, fs):
         self.fs = fs
         rfc1094.NFS_PROGRAM_2.__init__ (self)
-    def NFSPROC_NULL (self):
+    def NFSPROC_NULL (self, unused):
         return None
     def NFSPROC_GETATTR (self, fh):
-        as = rfc1094.attrstat ()
+        ast = rfc1094.attrstat ()
         fil = self.fs.get_fil (fh)
         if fil == None:
-            as.status = rfc1094.NFSERR_STALE
+            ast.status = rfc1094.NFSERR_STALE
         else:
-            as.status = rfc1094.NFS_OK
-            as._data = fil
-        return as
+            ast.status = rfc1094.NFS_OK
+            ast._data = fil
+        return ast
     
     def NFSPROC_SETATTR (self, sattrargs):
         rv = rfc1094.attrstat ()
