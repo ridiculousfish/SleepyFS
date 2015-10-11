@@ -12,6 +12,8 @@
 
 # XXX There is no provision for call timeout on TCP connections
 
+# sudo launchctl start com.apple.rpcbind
+
 import xdrlib as xdr
 import socket
 import os

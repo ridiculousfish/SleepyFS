@@ -313,12 +313,12 @@ if __name__ == '__main__':
     lock = threading.Lock ()
     ms = MntSrv (fs)
     
-    mnt_rpc = ms.create_transport_server (5555, server_class, lock=lock)
+    mnt_rpc = ms.create_transport_server (15555, server_class, lock=lock)
     ms.register (mnt_rpc)
     mntthread = threading.Thread (target=mnt_rpc.loop)
     mntthread.start ()
     ns = NfsSrv(fs)
-    nfs_rpc = ns.create_transport_server (2049, server_class, lock=lock)
+    nfs_rpc = ns.create_transport_server (12049, server_class, lock=lock)
     ns.register (nfs_rpc)
     try:
         if interact_loop:
