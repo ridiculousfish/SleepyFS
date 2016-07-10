@@ -61,6 +61,10 @@ class FileSystem (memfs.FileSystem):
         members = tar_hdl.getmembers ()
         for member in members:
             nm = member.name.split ('/')
+            # hack?
+            # It seems as though tarfs has changed how it represents file names
+            # since this was first written
+            if member.isdir(): nm.append('')
             dirpath = nm[:-1]
             kw = {}
             for attrib in ['mode', 'uid', 'gid']:
