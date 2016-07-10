@@ -82,8 +82,6 @@ class FileSystem (memfs.FileSystem):
                                               size = 4,dir = {})
         members = tar_hdl.getmembers ()
         for member in members:
-            print member
-        for member in members:
             nm = member.name.split ('/')
             # hack?
             # It seems as though tarfs has changed how it represents file names

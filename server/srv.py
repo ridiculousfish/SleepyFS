@@ -294,16 +294,19 @@ class NfsSrv (rfc1094.NFS_PROGRAM_2, HostAccessControl):
 if __name__ == '__main__':
 
     server_class = rpc.UDPServer
-    optlist, args = getopt.getopt (sys.argv[1:], 'f:t')
+    optlist, args = getopt.getopt (sys.argv[1:], 'f:ts:')
     fs_dict = {'py': (pyfs, 1),
                'mem': (memfs, 0),
                'tar': (tarfs, 0)}
     fs_type = 'py'
+    sleepiness = 0
     for (opt, val) in optlist:
         if opt == '-f':
             fs_type = val
         elif opt == '-t':
-            server_class = rpc.TCPServer       
+            server_class = rpc.TCPServer
+        elif opt == '-s':
+            sleepiness = int(val)
     fs_mod, interact_loop = fs_dict.get (fs_type, (None, None))
     if fs_mod == None:
         print "Bad fs type", fs_type
@@ -326,7 +329,7 @@ if __name__ == '__main__':
             nfsthread.start ()
             code.interact ("NFS-server enabled Python interpreter loop")
         else:
-            nfs_rpc.loop ()
+            nfs_rpc.loop (sleepiness)
     finally:
         mnt_rpc.stop ()
         nfs_rpc.stop ()
