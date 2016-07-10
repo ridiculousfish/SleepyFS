@@ -40,25 +40,49 @@ import array
 import tarfile
 
 import memfs
+import io
+import os.path
+import os
 
 
 class FileObj(memfs.FileObj):
     pass
+
+def make_tarfile(path):
+    # If we're given a tarfile, open it
+    # Otherwise treat it as a directory and make an in-memory file
+    extension = os.path.splitext(path)[1]
+    if extension == '.tar':
+        try:
+            tar_hdl = tarfile.open (path , 'r')
+            return tar_hdl
+        except (tarfile.TarError, IOError), exn:
+            print "Error", exn, "opening", path
+            return None
+    else:
+        file_like_object = io.BytesIO()
+        tar = tarfile.open(fileobj=file_like_object, mode='w')
+        for name in os.listdir(path):
+            tar.add(os.path.join(path, name), arcname=name)
+        tar.close()
+        file_like_object.seek(0)
+        tar = tarfile.open(fileobj=file_like_object, mode='r')
+            
+        return tar
 
 
 class FileSystem (memfs.FileSystem):
     def __init__ (self, fh_ctr = fsbase.Ctr ()):
         self._fh_ctr = fh_ctr
         self._fils = {}
+        
     def mount (self, path):
-        try:
-            tar_hdl = tarfile.open (path , 'r')
-        except (tarfile.TarError, IOError), exn:
-            print "Error", exn, "opening", path
-            return None
+        tar_hdl = make_tarfile(path)
         new_root, root_fil = self.create_fil (None, '', type = rfc1094.NFDIR,
                                               size = 4,dir = {})
         members = tar_hdl.getmembers ()
+        for member in members:
+            print member
         for member in members:
             nm = member.name.split ('/')
             # hack?
